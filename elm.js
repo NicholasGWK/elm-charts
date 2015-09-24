@@ -351,7 +351,7 @@ Elm.Color.make = function (_elm) {
                         ,saturation: s};
               }();}
          _U.badCase($moduleName,
-         "between lines 114 and 118");
+         "between lines 114 and 121");
       }();
    };
    var HSLA = F4(function (a,
@@ -407,7 +407,7 @@ Elm.Color.make = function (_elm) {
                  color._3);
               }();}
          _U.badCase($moduleName,
-         "between lines 105 and 108");
+         "between lines 105 and 111");
       }();
    };
    var grayscale = function (p) {
@@ -771,7 +771,7 @@ Elm.Graphics.Collage.make = function (_elm) {
                               ,["y",f.y + _v0._1]],
               f);}
          _U.badCase($moduleName,
-         "on line 226, column 3 to 37");
+         "on line 226, column 7 to 35");
       }();
    });
    var form = function (f) {
@@ -1454,7 +1454,7 @@ Elm.Graphics.Element.make = function (_elm) {
                  maxOrZero(ws),
                  $List.sum(hs));}
             _U.badCase($moduleName,
-            "between lines 362 and 368");
+            "between lines 362 and 373");
          }();
       }();
    });
@@ -1659,7 +1659,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return $Maybe.Nothing;}
          _U.badCase($moduleName,
-         "between lines 87 and 89");
+         "between lines 87 and 95");
       }();
    };
    var head = function (list) {
@@ -1670,7 +1670,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return $Maybe.Nothing;}
          _U.badCase($moduleName,
-         "between lines 75 and 77");
+         "between lines 75 and 84");
       }();
    };
    _op["::"] = $Native$List.cons;
@@ -1709,7 +1709,7 @@ Elm.List.make = function (_elm) {
             return A2(_op["::"],_v15._0,xs);
             case "Nothing": return xs;}
          _U.badCase($moduleName,
-         "between lines 179 and 181");
+         "between lines 179 and 186");
       }();
    });
    var filterMap = F2(function (f,
@@ -1856,7 +1856,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 350 and 356");
+         "between lines 350 and 361");
       }();
    });
    _elm.List.values = {_op: _op
@@ -1909,72 +1909,28 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var dots = function (dataset) {
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm);
+   var calcAngles = function (normalizedData) {
       return A2($List.map,
-      function (point) {
-         return A2($Graphics$Collage.move,
-         {ctor: "_Tuple2"
-         ,_0: point.x
-         ,_1: point.y},
-         A2($Graphics$Collage.filled,
-         $Color.red,
-         $Graphics$Collage.circle(5)));
+      function (data) {
+         return data * 2 * $Basics.pi - $Basics.pi / 2;
+      },
+      normalizedData);
+   };
+   var normalize = function (dataset) {
+      return A2($List.map,
+      function (data) {
+         return data / $List.sum(dataset);
       },
       dataset);
    };
-   var points2tuples = function (dataset) {
-      return A2($List.map,
-      function (point) {
-         return {ctor: "_Tuple2"
-                ,_0: point.x
-                ,_1: point.y};
-      },
-      dataset);
-   };
-   var lines = function (dataset) {
-      return A2($Graphics$Collage.traced,
-      $Graphics$Collage.solid($Color.red),
-      $Graphics$Collage.path(points2tuples(dataset)));
-   };
-   var point = function (_v0) {
-      return function () {
-         switch (_v0.ctor)
-         {case "_Tuple2": return {_: {}
-                                 ,x: _v0._0
-                                 ,y: _v0._1};}
-         _U.badCase($moduleName,
-         "between lines 14 and 17");
-      }();
-   };
-   var myData = _L.fromArray([point({ctor: "_Tuple2"
-                                    ,_0: 0
-                                    ,_1: 0})
-                             ,point({ctor: "_Tuple2"
-                                    ,_0: 10
-                                    ,_1: 10})]);
-   var main = A3($Graphics$Collage.collage,
-   200,
-   200,
-   A2($List._op["::"],
-   lines(myData),
-   dots(myData)));
-   var Point = F2(function (a,b) {
-      return {_: {},x: a,y: b};
-   });
+   var main = $Graphics$Element.show(calcAngles(normalize(_L.fromArray([10
+                                                                       ,10]))));
    _elm.Main.values = {_op: _op
-                      ,Point: Point
-                      ,point: point
-                      ,myData: myData
                       ,main: main
-                      ,points2tuples: points2tuples
-                      ,lines: lines
-                      ,dots: dots};
+                      ,normalize: normalize
+                      ,calcAngles: calcAngles};
    return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
@@ -1996,7 +1952,7 @@ Elm.Maybe.make = function (_elm) {
             case "Nothing":
             return $default;}
          _U.badCase($moduleName,
-         "between lines 45 and 47");
+         "between lines 45 and 56");
       }();
    });
    var Nothing = {ctor: "Nothing"};
@@ -2009,11 +1965,11 @@ Elm.Maybe.make = function (_elm) {
                     case "Nothing":
                     return oneOf(maybes._1);}
                  _U.badCase($moduleName,
-                 "between lines 64 and 66");
+                 "between lines 64 and 73");
               }();
             case "[]": return Nothing;}
          _U.badCase($moduleName,
-         "between lines 59 and 66");
+         "between lines 59 and 73");
       }();
    };
    var andThen = F2(function (maybeValue,
@@ -2038,7 +1994,7 @@ Elm.Maybe.make = function (_elm) {
             return Just(f(maybe._0));
             case "Nothing": return Nothing;}
          _U.badCase($moduleName,
-         "between lines 76 and 78");
+         "between lines 76 and 107");
       }();
    });
    _elm.Maybe.values = {_op: _op
@@ -6325,6 +6281,75 @@ Elm.Native.Utils.make = function(localRuntime) {
 	};
 };
 
+Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Window = localRuntime.Native.Window || {};
+	if (localRuntime.Native.Window.values)
+	{
+		return localRuntime.Native.Window.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+
+	function getWidth()
+	{
+		return localRuntime.node.clientWidth;
+	}
+
+
+	function getHeight()
+	{
+		if (localRuntime.isFullscreen())
+		{
+			return window.innerHeight;
+		}
+		return localRuntime.node.clientHeight;
+	}
+
+
+	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
+
+
+	function resizeIfNeeded()
+	{
+		// Do not trigger event if the dimensions have not changed.
+		// This should be most of the time.
+		var w = getWidth();
+		var h = getHeight();
+		if (dimensions.value._0 === w && dimensions.value._1 === h)
+		{
+			return;
+		}
+
+		setTimeout(function () {
+			// Check again to see if the dimensions have changed.
+			// It is conceivable that the dimensions have changed
+			// again while some other event was being processed.
+			var w = getWidth();
+			var h = getHeight();
+			if (dimensions.value._0 === w && dimensions.value._1 === h)
+			{
+				return;
+			}
+			localRuntime.notify(dimensions.id, Tuple2(w,h));
+		}, 0);
+	}
+
+
+	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+
+	return localRuntime.Native.Window.values = {
+		dimensions: dimensions,
+		resizeIfNeeded: resizeIfNeeded
+	};
+};
+
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -6345,7 +6370,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return $Maybe.Just(result._0);}
          _U.badCase($moduleName,
-         "between lines 164 and 166");
+         "between lines 164 and 177");
       }();
    };
    var Err = function (a) {
@@ -6360,7 +6385,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return callback(result._0);}
          _U.badCase($moduleName,
-         "between lines 126 and 128");
+         "between lines 126 and 145");
       }();
    });
    var Ok = function (a) {
@@ -6374,7 +6399,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return Ok(func(ra._0));}
          _U.badCase($moduleName,
-         "between lines 41 and 43");
+         "between lines 41 and 52");
       }();
    });
    var map2 = F3(function (func,
@@ -6528,7 +6553,7 @@ Elm.Result.make = function (_elm) {
                  return Err(_v39._4._0);}
               break;}
          _U.badCase($moduleName,
-         "between lines 82 and 88");
+         "between lines 82 and 123");
       }();
    });
    var formatError = F2(function (f,
@@ -6540,7 +6565,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return Ok(result._0);}
          _U.badCase($moduleName,
-         "between lines 148 and 150");
+         "between lines 148 and 161");
       }();
    });
    var fromMaybe = F2(function (err,
@@ -6671,7 +6696,7 @@ Elm.Signal.make = function (_elm) {
             case "[]":
             return $Debug.crash("mergeMany was given an empty list!");}
          _U.badCase($moduleName,
-         "between lines 177 and 182");
+         "between lines 177 and 197");
       }();
    };
    var foldp = $Native$Signal.foldp;
@@ -7088,4 +7113,31 @@ Elm.Transform2D.make = function (_elm) {
                              ,scaleX: scaleX
                              ,scaleY: scaleY};
    return _elm.Transform2D.values;
+};
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values)
+   return _elm.Window.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Window",
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Window = Elm.Native.Window.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var dimensions = $Native$Window.dimensions;
+   var width = A2($Signal.map,
+   $Basics.fst,
+   dimensions);
+   var height = A2($Signal.map,
+   $Basics.snd,
+   dimensions);
+   _elm.Window.values = {_op: _op
+                        ,dimensions: dimensions
+                        ,width: width
+                        ,height: height};
+   return _elm.Window.values;
 };
