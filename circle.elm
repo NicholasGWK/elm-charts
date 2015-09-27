@@ -6,7 +6,7 @@ import List exposing (..)
 import Color exposing (..)
 
 main =
-   collage 200 200 [ traced (solid red) curve]
+   collage 200 200 [filled red (polygon (append curve (reverse curve2)))]
 
 c = 0.551915024494
 
@@ -17,8 +17,11 @@ steps num =
   List.map (\current -> current / num) [0..num]
 
 
-half p0 p1 p2 p3 num =
-  List.map(\step -> 100 * (computerBezier p0 p1 p2 p3 step)) (steps num)
+half p0 p1 p2 p3 num r =
+  List.map(\step -> r * (computerBezier p0 p1 p2 p3 step)) (steps num)
 
 curve =
-  (List.map2 (\first second -> (first,second)) (half 0 c 1 1 100) (half 1 1 c 0 100))
+  (List.map2 (\first second -> (first,second)) (half 0 c 1 1 100 100) (half 1 1 c 0 100 100))
+
+curve2 =
+  (List.map2 (\first second -> (first,second)) (half 0 c 1 1 100 50) (half 1 1 c 0 100 50))
