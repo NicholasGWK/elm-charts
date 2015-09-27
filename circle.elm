@@ -31,7 +31,7 @@ multTuple point m =
 
 
 main =
-  collage 200 200 [append (arcCurve (0,1) (c,1) (1,c) (1,0) 100 100) (reverse (arcCurve  (0,1) (c,1) (1,c) (1,0) 100 50))
+  collage 200 200 [append (arcCurve (0,1) (computeControlPoints (0,1) (1,0)) (1,0) 100 100) (reverse (arcCurve  (0,1) (c,1) (1,c) (1,0) 100 50))
   |> polygon
   |> filled red]
 
@@ -47,3 +47,9 @@ steps num =
 
 arcCurve p0 p1 p2 p3 num r =
   List.map(\step -> multTuple (computerBezier p0 p1 p2 p3 step) r) (steps num)
+
+computeControlPoint: (Float,Float) -> (Float,Float) -> (Float,Float) -> (Float,Float)
+computeControlPoints p0 p3 =
+  (\p0 p3 ->  ((c * (cos (tan ( fst p0 / snd p0))), snd p0)) ,
+             (fst p3, (c * (sin (tan ( fst p3 / snd p3)))
+             )))
