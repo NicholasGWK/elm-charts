@@ -1911,26 +1911,46 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm);
-   var calcAngles = function (normalizedData) {
-      return A2($List.map,
-      function (data) {
-         return data * 2 * $Basics.pi - $Basics.pi / 2;
-      },
+   var addToList = F2(function (x,
+   xs) {
+      return function () {
+         switch (xs.ctor)
+         {case "::": switch (xs._0.ctor)
+              {case "_Tuple2":
+                 return A2($List._op["::"],
+                   {ctor: "_Tuple2"
+                   ,_0: xs._0._1
+                   ,_1: xs._0._1 + x},
+                   xs);}
+              break;
+            case "[]":
+            return _L.fromArray([{ctor: "_Tuple2"
+                                 ,_0: 0
+                                 ,_1: x}]);}
+         _U.badCase($moduleName,
+         "between lines 22 and 26");
+      }();
+   });
+   var calcArcLengths = function (normalizedData) {
+      return A3($List.foldl,
+      addToList,
+      _L.fromArray([]),
       normalizedData);
    };
    var normalize = function (dataset) {
       return A2($List.map,
       function (data) {
-         return data / $List.sum(dataset);
+         return data * $Basics.pi / $List.sum(dataset);
       },
       dataset);
    };
-   var main = $Graphics$Element.show(calcAngles(normalize(_L.fromArray([10
-                                                                       ,10]))));
+   var main = $Graphics$Element.show($List.reverse(calcArcLengths(normalize(_L.fromArray([1
+                                                                                         ,2])))));
    _elm.Main.values = {_op: _op
                       ,main: main
                       ,normalize: normalize
-                      ,calcAngles: calcAngles};
+                      ,calcArcLengths: calcArcLengths
+                      ,addToList: addToList};
    return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
