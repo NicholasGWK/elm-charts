@@ -1,0 +1,103 @@
+Elm.Circle = Elm.Circle || {};
+Elm.Circle.make = function (_elm) {
+   "use strict";
+   _elm.Circle = _elm.Circle || {};
+   if (_elm.Circle.values)
+   return _elm.Circle.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Circle",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $List = Elm.List.make(_elm);
+   var addPolar = F2(function (p1,
+   p2) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst($Basics.fromPolar(p1)) + $Basics.fst($Basics.fromPolar(p2))
+             ,_1: $Basics.snd($Basics.fromPolar(p1)) + $Basics.snd($Basics.fromPolar(p2))};
+   });
+   var steps = function (num) {
+      return A2($List.map,
+      function (current) {
+         return current / num;
+      },
+      _L.range(0,num));
+   };
+   var computeBezier = F5(function (p0,
+   p1,
+   p2,
+   p3,
+   t) {
+      return {ctor: "_Tuple2"
+             ,_0: Math.pow(1 - t,
+             3) * $Basics.fst(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.fst(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.fst(p2) + Math.pow(t,
+             3) * $Basics.fst(p3)
+             ,_1: Math.pow(1 - t,
+             3) * $Basics.snd(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.snd(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.snd(p2) + Math.pow(t,
+             3) * $Basics.snd(p3)};
+   });
+   var c = 0.551915024494;
+   var computeControlPoint = F2(function (p0,
+   rotation) {
+      return $Basics.toPolar(A2(addPolar,
+      p0,
+      {ctor: "_Tuple2"
+      ,_0: c * 100
+      ,_1: $Basics.snd(p0) + rotation}));
+   });
+   var scalePolar = F2(function (point,
+   m) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst(point) * m
+             ,_1: $Basics.snd(point) * m};
+   });
+   var arcSegmentToBezierCurve = F2(function (arc,
+   radius) {
+      return A4(computeBezier,
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.fst(arc)}),
+      $Basics.fromPolar(A2(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.fst(arc)},
+      $Basics.pi / 2)),
+      $Basics.fromPolar(A2(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.snd(arc)},
+      $Basics.pi / 2 * -1)),
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.snd(arc)}));
+   });
+   var main = A3($Graphics$Collage.collage,
+   200,
+   200,
+   _L.fromArray([A2($Graphics$Collage.traced,
+   $Graphics$Collage.solid($Color.red),
+   A2($List.map,
+   A2(arcSegmentToBezierCurve,
+   {ctor: "_Tuple2"
+   ,_0: 0
+   ,_1: $Basics.pi / 2},
+   100),
+   steps(100)))]));
+   _elm.Circle.values = {_op: _op
+                        ,main: main
+                        ,arcSegmentToBezierCurve: arcSegmentToBezierCurve
+                        ,scalePolar: scalePolar
+                        ,c: c
+                        ,computeBezier: computeBezier
+                        ,steps: steps
+                        ,computeControlPoint: computeControlPoint
+                        ,addPolar: addPolar};
+   return _elm.Circle.values;
+};

@@ -1,13 +1,10 @@
+module Donut where
+
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Color exposing (..)
 import List exposing (..)
 import Window exposing (..)
-
-
-main =
-  show <| List.reverse <| calcArcLengths <| normalize <| [1,2]
-
 
 normalize: List Float -> List Float
 normalize dataset =

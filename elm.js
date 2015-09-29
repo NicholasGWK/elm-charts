@@ -177,6 +177,109 @@ Elm.Basics.make = function (_elm) {
                         ,GT: GT};
    return _elm.Basics.values;
 };
+Elm.Circle = Elm.Circle || {};
+Elm.Circle.make = function (_elm) {
+   "use strict";
+   _elm.Circle = _elm.Circle || {};
+   if (_elm.Circle.values)
+   return _elm.Circle.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Circle",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $List = Elm.List.make(_elm);
+   var addPolar = F2(function (p1,
+   p2) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst($Basics.fromPolar(p1)) + $Basics.fst($Basics.fromPolar(p2))
+             ,_1: $Basics.snd($Basics.fromPolar(p1)) + $Basics.snd($Basics.fromPolar(p2))};
+   });
+   var steps = function (num) {
+      return A2($List.map,
+      function (current) {
+         return current / num;
+      },
+      _L.range(0,num));
+   };
+   var computeBezier = F5(function (p0,
+   p1,
+   p2,
+   p3,
+   t) {
+      return {ctor: "_Tuple2"
+             ,_0: Math.pow(1 - t,
+             3) * $Basics.fst(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.fst(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.fst(p2) + Math.pow(t,
+             3) * $Basics.fst(p3)
+             ,_1: Math.pow(1 - t,
+             3) * $Basics.snd(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.snd(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.snd(p2) + Math.pow(t,
+             3) * $Basics.snd(p3)};
+   });
+   var c = 0.551915024494;
+   var computeControlPoint = F2(function (p0,
+   rotation) {
+      return $Basics.toPolar(A2(addPolar,
+      p0,
+      {ctor: "_Tuple2"
+      ,_0: c * 100
+      ,_1: $Basics.snd(p0) + rotation}));
+   });
+   var scalePolar = F2(function (point,
+   m) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst(point) * m
+             ,_1: $Basics.snd(point) * m};
+   });
+   var arcSegmentToBezierCurve = F2(function (arc,
+   radius) {
+      return A4(computeBezier,
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.fst(arc)}),
+      $Basics.fromPolar(A2(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.fst(arc)},
+      $Basics.pi / 2)),
+      $Basics.fromPolar(A2(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.snd(arc)},
+      $Basics.pi / 2 * -1)),
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.snd(arc)}));
+   });
+   var main = A3($Graphics$Collage.collage,
+   200,
+   200,
+   _L.fromArray([A2($Graphics$Collage.traced,
+   $Graphics$Collage.solid($Color.red),
+   A2($List.map,
+   A2(arcSegmentToBezierCurve,
+   {ctor: "_Tuple2"
+   ,_0: 0
+   ,_1: $Basics.pi / 2},
+   100),
+   steps(100)))]));
+   _elm.Circle.values = {_op: _op
+                        ,main: main
+                        ,arcSegmentToBezierCurve: arcSegmentToBezierCurve
+                        ,scalePolar: scalePolar
+                        ,c: c
+                        ,computeBezier: computeBezier
+                        ,steps: steps
+                        ,computeControlPoint: computeControlPoint
+                        ,addPolar: addPolar};
+   return _elm.Circle.values;
+};
 Elm.Color = Elm.Color || {};
 Elm.Color.make = function (_elm) {
    "use strict";
@@ -1896,62 +1999,6 @@ Elm.List.make = function (_elm) {
                       ,sortBy: sortBy
                       ,sortWith: sortWith};
    return _elm.List.values;
-};
-Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
-   "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values)
-   return _elm.Main.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Main",
-   $Basics = Elm.Basics.make(_elm),
-   $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm);
-   var addToList = F2(function (x,
-   xs) {
-      return function () {
-         switch (xs.ctor)
-         {case "::": switch (xs._0.ctor)
-              {case "_Tuple2":
-                 return A2($List._op["::"],
-                   {ctor: "_Tuple2"
-                   ,_0: xs._0._1
-                   ,_1: xs._0._1 + x},
-                   xs);}
-              break;
-            case "[]":
-            return _L.fromArray([{ctor: "_Tuple2"
-                                 ,_0: 0
-                                 ,_1: x}]);}
-         _U.badCase($moduleName,
-         "between lines 22 and 26");
-      }();
-   });
-   var calcArcLengths = function (normalizedData) {
-      return A3($List.foldl,
-      addToList,
-      _L.fromArray([]),
-      normalizedData);
-   };
-   var normalize = function (dataset) {
-      return A2($List.map,
-      function (data) {
-         return data * $Basics.pi / $List.sum(dataset);
-      },
-      dataset);
-   };
-   var main = $Graphics$Element.show($List.reverse(calcArcLengths(normalize(_L.fromArray([1
-                                                                                         ,2])))));
-   _elm.Main.values = {_op: _op
-                      ,main: main
-                      ,normalize: normalize
-                      ,calcArcLengths: calcArcLengths
-                      ,addToList: addToList};
-   return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
@@ -6301,75 +6348,6 @@ Elm.Native.Utils.make = function(localRuntime) {
 	};
 };
 
-Elm.Native = Elm.Native || {};
-Elm.Native.Window = {};
-Elm.Native.Window.make = function(localRuntime) {
-
-	localRuntime.Native = localRuntime.Native || {};
-	localRuntime.Native.Window = localRuntime.Native.Window || {};
-	if (localRuntime.Native.Window.values)
-	{
-		return localRuntime.Native.Window.values;
-	}
-
-	var NS = Elm.Native.Signal.make(localRuntime);
-	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
-
-
-	function getWidth()
-	{
-		return localRuntime.node.clientWidth;
-	}
-
-
-	function getHeight()
-	{
-		if (localRuntime.isFullscreen())
-		{
-			return window.innerHeight;
-		}
-		return localRuntime.node.clientHeight;
-	}
-
-
-	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
-
-
-	function resizeIfNeeded()
-	{
-		// Do not trigger event if the dimensions have not changed.
-		// This should be most of the time.
-		var w = getWidth();
-		var h = getHeight();
-		if (dimensions.value._0 === w && dimensions.value._1 === h)
-		{
-			return;
-		}
-
-		setTimeout(function () {
-			// Check again to see if the dimensions have changed.
-			// It is conceivable that the dimensions have changed
-			// again while some other event was being processed.
-			var w = getWidth();
-			var h = getHeight();
-			if (dimensions.value._0 === w && dimensions.value._1 === h)
-			{
-				return;
-			}
-			localRuntime.notify(dimensions.id, Tuple2(w,h));
-		}, 0);
-	}
-
-
-	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
-
-
-	return localRuntime.Native.Window.values = {
-		dimensions: dimensions,
-		resizeIfNeeded: resizeIfNeeded
-	};
-};
-
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -7133,31 +7111,4 @@ Elm.Transform2D.make = function (_elm) {
                              ,scaleX: scaleX
                              ,scaleY: scaleY};
    return _elm.Transform2D.values;
-};
-Elm.Window = Elm.Window || {};
-Elm.Window.make = function (_elm) {
-   "use strict";
-   _elm.Window = _elm.Window || {};
-   if (_elm.Window.values)
-   return _elm.Window.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Window",
-   $Basics = Elm.Basics.make(_elm),
-   $Native$Window = Elm.Native.Window.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var dimensions = $Native$Window.dimensions;
-   var width = A2($Signal.map,
-   $Basics.fst,
-   dimensions);
-   var height = A2($Signal.map,
-   $Basics.snd,
-   dimensions);
-   _elm.Window.values = {_op: _op
-                        ,dimensions: dimensions
-                        ,width: width
-                        ,height: height};
-   return _elm.Window.values;
 };
