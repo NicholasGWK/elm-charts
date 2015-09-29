@@ -190,6 +190,7 @@ Elm.Circle.make = function (_elm) {
    $moduleName = "Circle",
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $List = Elm.List.make(_elm);
    var addPolar = F2(function (p1,
@@ -197,6 +198,17 @@ Elm.Circle.make = function (_elm) {
       return {ctor: "_Tuple2"
              ,_0: $Basics.fst($Basics.fromPolar(p1)) + $Basics.fst($Basics.fromPolar(p2))
              ,_1: $Basics.snd($Basics.fromPolar(p1)) + $Basics.snd($Basics.fromPolar(p2))};
+   });
+   var computeControlPoint = F3(function (p0,
+   c,
+   rotation) {
+      return $Basics.toPolar(A2(addPolar,
+      p0,
+      A2($Debug.log,
+      "rotate",
+      {ctor: "_Tuple2"
+      ,_0: c * 100
+      ,_1: $Basics.snd(p0) + rotation})));
    });
    var steps = function (num) {
       return A2($List.map,
@@ -222,15 +234,11 @@ Elm.Circle.make = function (_elm) {
              2) * $Basics.snd(p2) + Math.pow(t,
              3) * $Basics.snd(p3)};
    });
-   var c = 0.551915024494;
-   var computeControlPoint = F2(function (p0,
-   rotation) {
-      return $Basics.toPolar(A2(addPolar,
-      p0,
-      {ctor: "_Tuple2"
-      ,_0: c * 100
-      ,_1: $Basics.snd(p0) + rotation}));
-   });
+   var calculateC = function (arc) {
+      return A2($Debug.log,
+      "c",
+      4 / 3 * $Basics.tan($Basics.pi / (2 * (2 * $Basics.pi / ($Basics.snd(arc) - $Basics.fst(arc))))));
+   };
    var scalePolar = F2(function (point,
    m) {
       return {ctor: "_Tuple2"
@@ -243,15 +251,17 @@ Elm.Circle.make = function (_elm) {
       $Basics.fromPolar({ctor: "_Tuple2"
                         ,_0: radius
                         ,_1: $Basics.fst(arc)}),
-      $Basics.fromPolar(A2(computeControlPoint,
+      $Basics.fromPolar(A3(computeControlPoint,
       {ctor: "_Tuple2"
       ,_0: radius
       ,_1: $Basics.fst(arc)},
+      calculateC(arc),
       $Basics.pi / 2)),
-      $Basics.fromPolar(A2(computeControlPoint,
+      $Basics.fromPolar(A3(computeControlPoint,
       {ctor: "_Tuple2"
       ,_0: radius
       ,_1: $Basics.snd(arc)},
+      calculateC(arc),
       $Basics.pi / 2 * -1)),
       $Basics.fromPolar({ctor: "_Tuple2"
                         ,_0: radius
@@ -261,19 +271,28 @@ Elm.Circle.make = function (_elm) {
    200,
    200,
    _L.fromArray([A2($Graphics$Collage.traced,
-   $Graphics$Collage.solid($Color.red),
-   A2($List.map,
-   A2(arcSegmentToBezierCurve,
-   {ctor: "_Tuple2"
-   ,_0: 0
-   ,_1: $Basics.pi / 2},
-   100),
-   steps(100)))]));
+                $Graphics$Collage.solid($Color.red),
+                A2($List.map,
+                A2(arcSegmentToBezierCurve,
+                {ctor: "_Tuple2"
+                ,_0: 0
+                ,_1: $Basics.pi / 4},
+                100),
+                steps(100)))
+                ,A2($Graphics$Collage.traced,
+                $Graphics$Collage.solid($Color.blue),
+                A2($List.map,
+                A2(arcSegmentToBezierCurve,
+                {ctor: "_Tuple2"
+                ,_0: $Basics.pi / 4
+                ,_1: $Basics.pi},
+                100),
+                steps(100)))]));
    _elm.Circle.values = {_op: _op
                         ,main: main
                         ,arcSegmentToBezierCurve: arcSegmentToBezierCurve
                         ,scalePolar: scalePolar
-                        ,c: c
+                        ,calculateC: calculateC
                         ,computeBezier: computeBezier
                         ,steps: steps
                         ,computeControlPoint: computeControlPoint

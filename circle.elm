@@ -5,23 +5,25 @@ import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import List exposing (..)
 import Color exposing (..)
+import Debug exposing (..)
 
 
 main =
   collage 200 200 [
-  (traced (solid red) (List.map (arcSegmentToBezierCurve (0,pi/2) 100) (steps 100)))
-  ]
-
+  (traced (solid red) (List.map ( arcSegmentToBezierCurve (0,pi/4) 100) (steps 100))),
+  (traced (solid blue) (List.map ( arcSegmentToBezierCurve (pi/4,pi) 100) (steps 100)))]
 
 arcSegmentToBezierCurve arc radius =
-  computeBezier ( fromPolar (radius, fst arc)) (fromPolar (computeControlPoint (radius, fst arc) (pi / 2) )) (fromPolar(computeControlPoint (radius,snd arc) (pi / 2 * -1)))   (fromPolar(radius, snd arc))
+ computeBezier ( fromPolar (radius, fst arc)) (fromPolar (computeControlPoint (radius, fst arc) (calculateC arc) (pi / 2) )) (fromPolar(computeControlPoint (radius,snd arc) (calculateC arc) (pi / 2 * -1))) (fromPolar(radius, snd arc))
 
 
 scalePolar: (Float,Float) -> Float -> (Float,Float)
 scalePolar point m =
   ((fst point) * m, (snd point) * m)
 
-c = 0.551915024494 --Optimal distance to control point. Must be rotated 90/-90 from start/end point of arc segment
+
+calculateC arc =
+  log "c" ((4/3) * tan (pi / (2*( ((2 * pi)/((snd arc) - fst (arc)) )))))
 
 computeBezier p0 p1 p2 p3 t =
    ( (1-t)^3 * fst p0 + 3 * (1-t)^2 * t * fst p1 + 3 * (1-t) * t^2 * fst p2 + t^3 * fst p3,
@@ -30,9 +32,9 @@ computeBezier p0 p1 p2 p3 t =
 steps num =
   List.map (\current -> current / num) [0..num]
 
-computeControlPoint: (Float,Float) -> Float -> (Float,Float)
-computeControlPoint p0 rotation =
-  toPolar (addPolar p0 (c*SCALEMEBYRADIUS,((snd p0) + rotation)))
+computeControlPoint: (Float,Float) -> Float -> Float -> (Float,Float)
+computeControlPoint p0 c rotation =
+  toPolar (addPolar p0 (log "rotate"(c*100,((snd p0) + rotation))))
 
 addPolar: (Float,Float) -> (Float,Float) -> (Float,Float)
 addPolar p1 p2 =
