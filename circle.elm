@@ -32,7 +32,7 @@ steps num =
 
 computeControlPoint: (Float,Float) -> Float -> (Float,Float)
 computeControlPoint p0 rotation =
-  toPolar (addPolar p0 (c*100,((snd p0) + rotation)))
+  toPolar (addPolar p0 (c*SCALEMEBYRADIUS,((snd p0) + rotation)))
 
 addPolar: (Float,Float) -> (Float,Float) -> (Float,Float)
 addPolar p1 p2 =
