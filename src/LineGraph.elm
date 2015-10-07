@@ -1,4 +1,4 @@
-module LineGraph where
+module LineChart where
 
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
