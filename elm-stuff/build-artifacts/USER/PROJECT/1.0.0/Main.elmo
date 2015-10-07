@@ -10,71 +10,12 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var dots = function (dataset) {
-      return A2($List.map,
-      function (point) {
-         return A2($Graphics$Collage.move,
-         {ctor: "_Tuple2"
-         ,_0: point.x
-         ,_1: point.y},
-         A2($Graphics$Collage.filled,
-         $Color.red,
-         $Graphics$Collage.circle(5)));
-      },
-      dataset);
-   };
-   var points2tuples = function (dataset) {
-      return A2($List.map,
-      function (point) {
-         return {ctor: "_Tuple2"
-                ,_0: point.x
-                ,_1: point.y};
-      },
-      dataset);
-   };
-   var lines = function (dataset) {
-      return A2($Graphics$Collage.traced,
-      $Graphics$Collage.solid($Color.red),
-      $Graphics$Collage.path(points2tuples(dataset)));
-   };
-   var point = function (_v0) {
-      return function () {
-         switch (_v0.ctor)
-         {case "_Tuple2": return {_: {}
-                                 ,x: _v0._0
-                                 ,y: _v0._1};}
-         _U.badCase($moduleName,
-         "between lines 14 and 17");
-      }();
-   };
-   var myData = _L.fromArray([point({ctor: "_Tuple2"
-                                    ,_0: 0
-                                    ,_1: 0})
-                             ,point({ctor: "_Tuple2"
-                                    ,_0: 10
-                                    ,_1: 10})]);
-   var main = A3($Graphics$Collage.collage,
-   200,
-   200,
-   A2($List._op["::"],
-   lines(myData),
-   dots(myData)));
-   var Point = F2(function (a,b) {
-      return {_: {},x: a,y: b};
-   });
+   $Donut = Elm.Donut.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm);
+   var main = $Graphics$Element.show($List.reverse($Donut.calcArcLengths($Donut.normalize(_L.fromArray([1
+                                                                                                       ,2])))));
    _elm.Main.values = {_op: _op
-                      ,Point: Point
-                      ,point: point
-                      ,myData: myData
-                      ,main: main
-                      ,points2tuples: points2tuples
-                      ,lines: lines
-                      ,dots: dots};
+                      ,main: main};
    return _elm.Main.values;
 };

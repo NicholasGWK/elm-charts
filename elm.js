@@ -177,6 +177,128 @@ Elm.Basics.make = function (_elm) {
                         ,GT: GT};
    return _elm.Basics.values;
 };
+Elm.Circle = Elm.Circle || {};
+Elm.Circle.make = function (_elm) {
+   "use strict";
+   _elm.Circle = _elm.Circle || {};
+   if (_elm.Circle.values)
+   return _elm.Circle.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Circle",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $List = Elm.List.make(_elm);
+   var addPolar = F2(function (p1,
+   p2) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst($Basics.fromPolar(p1)) + $Basics.fst($Basics.fromPolar(p2))
+             ,_1: $Basics.snd($Basics.fromPolar(p1)) + $Basics.snd($Basics.fromPolar(p2))};
+   });
+   var computeControlPoint = F3(function (p0,
+   c,
+   rotation) {
+      return $Basics.toPolar(A2(addPolar,
+      p0,
+      A2($Debug.log,
+      "rotate",
+      {ctor: "_Tuple2"
+      ,_0: c * 100
+      ,_1: $Basics.snd(p0) + rotation})));
+   });
+   var steps = function (num) {
+      return A2($List.map,
+      function (current) {
+         return current / num;
+      },
+      _L.range(0,num));
+   };
+   var computeBezier = F5(function (p0,
+   p1,
+   p2,
+   p3,
+   t) {
+      return {ctor: "_Tuple2"
+             ,_0: Math.pow(1 - t,
+             3) * $Basics.fst(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.fst(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.fst(p2) + Math.pow(t,
+             3) * $Basics.fst(p3)
+             ,_1: Math.pow(1 - t,
+             3) * $Basics.snd(p0) + 3 * Math.pow(1 - t,
+             2) * t * $Basics.snd(p1) + 3 * (1 - t) * Math.pow(t,
+             2) * $Basics.snd(p2) + Math.pow(t,
+             3) * $Basics.snd(p3)};
+   });
+   var calculateC = function (arc) {
+      return A2($Debug.log,
+      "c",
+      4 / 3 * $Basics.tan($Basics.pi / (2 * (2 * $Basics.pi / ($Basics.snd(arc) - $Basics.fst(arc))))));
+   };
+   var scalePolar = F2(function (point,
+   m) {
+      return {ctor: "_Tuple2"
+             ,_0: $Basics.fst(point) * m
+             ,_1: $Basics.snd(point) * m};
+   });
+   var arcSegmentToBezierCurve = F2(function (arc,
+   radius) {
+      return A4(computeBezier,
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.fst(arc)}),
+      $Basics.fromPolar(A3(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.fst(arc)},
+      calculateC(arc),
+      $Basics.pi / 2)),
+      $Basics.fromPolar(A3(computeControlPoint,
+      {ctor: "_Tuple2"
+      ,_0: radius
+      ,_1: $Basics.snd(arc)},
+      calculateC(arc),
+      $Basics.pi / 2 * -1)),
+      $Basics.fromPolar({ctor: "_Tuple2"
+                        ,_0: radius
+                        ,_1: $Basics.snd(arc)}));
+   });
+   var main = A3($Graphics$Collage.collage,
+   200,
+   200,
+   _L.fromArray([A2($Graphics$Collage.traced,
+                $Graphics$Collage.solid($Color.red),
+                A2($List.map,
+                A2(arcSegmentToBezierCurve,
+                {ctor: "_Tuple2"
+                ,_0: 0
+                ,_1: $Basics.pi / 4},
+                100),
+                steps(100)))
+                ,A2($Graphics$Collage.traced,
+                $Graphics$Collage.solid($Color.blue),
+                A2($List.map,
+                A2(arcSegmentToBezierCurve,
+                {ctor: "_Tuple2"
+                ,_0: $Basics.pi / 4
+                ,_1: $Basics.pi},
+                100),
+                steps(100)))]));
+   _elm.Circle.values = {_op: _op
+                        ,main: main
+                        ,arcSegmentToBezierCurve: arcSegmentToBezierCurve
+                        ,scalePolar: scalePolar
+                        ,calculateC: calculateC
+                        ,computeBezier: computeBezier
+                        ,steps: steps
+                        ,computeControlPoint: computeControlPoint
+                        ,addPolar: addPolar};
+   return _elm.Circle.values;
+};
 Elm.Color = Elm.Color || {};
 Elm.Color.make = function (_elm) {
    "use strict";
@@ -351,7 +473,7 @@ Elm.Color.make = function (_elm) {
                         ,saturation: s};
               }();}
          _U.badCase($moduleName,
-         "between lines 114 and 118");
+         "between lines 114 and 121");
       }();
    };
    var HSLA = F4(function (a,
@@ -407,7 +529,7 @@ Elm.Color.make = function (_elm) {
                  color._3);
               }();}
          _U.badCase($moduleName,
-         "between lines 105 and 108");
+         "between lines 105 and 111");
       }();
    };
    var grayscale = function (p) {
@@ -771,7 +893,7 @@ Elm.Graphics.Collage.make = function (_elm) {
                               ,["y",f.y + _v0._1]],
               f);}
          _U.badCase($moduleName,
-         "on line 226, column 3 to 37");
+         "on line 226, column 7 to 35");
       }();
    });
    var form = function (f) {
@@ -1454,7 +1576,7 @@ Elm.Graphics.Element.make = function (_elm) {
                  maxOrZero(ws),
                  $List.sum(hs));}
             _U.badCase($moduleName,
-            "between lines 362 and 368");
+            "between lines 362 and 373");
          }();
       }();
    });
@@ -1659,7 +1781,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return $Maybe.Nothing;}
          _U.badCase($moduleName,
-         "between lines 87 and 89");
+         "between lines 87 and 95");
       }();
    };
    var head = function (list) {
@@ -1670,7 +1792,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return $Maybe.Nothing;}
          _U.badCase($moduleName,
-         "between lines 75 and 77");
+         "between lines 75 and 84");
       }();
    };
    _op["::"] = $Native$List.cons;
@@ -1709,7 +1831,7 @@ Elm.List.make = function (_elm) {
             return A2(_op["::"],_v15._0,xs);
             case "Nothing": return xs;}
          _U.badCase($moduleName,
-         "between lines 179 and 181");
+         "between lines 179 and 186");
       }();
    });
    var filterMap = F2(function (f,
@@ -1856,7 +1978,7 @@ Elm.List.make = function (_elm) {
             case "[]":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 350 and 356");
+         "between lines 350 and 361");
       }();
    });
    _elm.List.values = {_op: _op
@@ -1897,86 +2019,6 @@ Elm.List.make = function (_elm) {
                       ,sortWith: sortWith};
    return _elm.List.values;
 };
-Elm.Main = Elm.Main || {};
-Elm.Main.make = function (_elm) {
-   "use strict";
-   _elm.Main = _elm.Main || {};
-   if (_elm.Main.values)
-   return _elm.Main.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Main",
-   $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var dots = function (dataset) {
-      return A2($List.map,
-      function (point) {
-         return A2($Graphics$Collage.move,
-         {ctor: "_Tuple2"
-         ,_0: point.x
-         ,_1: point.y},
-         A2($Graphics$Collage.filled,
-         $Color.red,
-         $Graphics$Collage.circle(5)));
-      },
-      dataset);
-   };
-   var points2tuples = function (dataset) {
-      return A2($List.map,
-      function (point) {
-         return {ctor: "_Tuple2"
-                ,_0: point.x
-                ,_1: point.y};
-      },
-      dataset);
-   };
-   var lines = function (dataset) {
-      return A2($Graphics$Collage.traced,
-      $Graphics$Collage.solid($Color.red),
-      $Graphics$Collage.path(points2tuples(dataset)));
-   };
-   var point = function (_v0) {
-      return function () {
-         switch (_v0.ctor)
-         {case "_Tuple2": return {_: {}
-                                 ,x: _v0._0
-                                 ,y: _v0._1};}
-         _U.badCase($moduleName,
-         "between lines 14 and 17");
-      }();
-   };
-   var myData = _L.fromArray([point({ctor: "_Tuple2"
-                                    ,_0: 0
-                                    ,_1: 0})
-                             ,point({ctor: "_Tuple2"
-                                    ,_0: 10
-                                    ,_1: 10})]);
-   var main = A3($Graphics$Collage.collage,
-   200,
-   200,
-   A2($List._op["::"],
-   lines(myData),
-   dots(myData)));
-   var Point = F2(function (a,b) {
-      return {_: {},x: a,y: b};
-   });
-   _elm.Main.values = {_op: _op
-                      ,Point: Point
-                      ,point: point
-                      ,myData: myData
-                      ,main: main
-                      ,points2tuples: points2tuples
-                      ,lines: lines
-                      ,dots: dots};
-   return _elm.Main.values;
-};
 Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
    "use strict";
@@ -1996,7 +2038,7 @@ Elm.Maybe.make = function (_elm) {
             case "Nothing":
             return $default;}
          _U.badCase($moduleName,
-         "between lines 45 and 47");
+         "between lines 45 and 56");
       }();
    });
    var Nothing = {ctor: "Nothing"};
@@ -2009,11 +2051,11 @@ Elm.Maybe.make = function (_elm) {
                     case "Nothing":
                     return oneOf(maybes._1);}
                  _U.badCase($moduleName,
-                 "between lines 64 and 66");
+                 "between lines 64 and 73");
               }();
             case "[]": return Nothing;}
          _U.badCase($moduleName,
-         "between lines 59 and 66");
+         "between lines 59 and 73");
       }();
    };
    var andThen = F2(function (maybeValue,
@@ -2038,7 +2080,7 @@ Elm.Maybe.make = function (_elm) {
             return Just(f(maybe._0));
             case "Nothing": return Nothing;}
          _U.badCase($moduleName,
-         "between lines 76 and 78");
+         "between lines 76 and 107");
       }();
    });
    _elm.Maybe.values = {_op: _op
@@ -6345,7 +6387,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return $Maybe.Just(result._0);}
          _U.badCase($moduleName,
-         "between lines 164 and 166");
+         "between lines 164 and 177");
       }();
    };
    var Err = function (a) {
@@ -6360,7 +6402,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return callback(result._0);}
          _U.badCase($moduleName,
-         "between lines 126 and 128");
+         "between lines 126 and 145");
       }();
    });
    var Ok = function (a) {
@@ -6374,7 +6416,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return Ok(func(ra._0));}
          _U.badCase($moduleName,
-         "between lines 41 and 43");
+         "between lines 41 and 52");
       }();
    });
    var map2 = F3(function (func,
@@ -6528,7 +6570,7 @@ Elm.Result.make = function (_elm) {
                  return Err(_v39._4._0);}
               break;}
          _U.badCase($moduleName,
-         "between lines 82 and 88");
+         "between lines 82 and 123");
       }();
    });
    var formatError = F2(function (f,
@@ -6540,7 +6582,7 @@ Elm.Result.make = function (_elm) {
             case "Ok":
             return Ok(result._0);}
          _U.badCase($moduleName,
-         "between lines 148 and 150");
+         "between lines 148 and 161");
       }();
    });
    var fromMaybe = F2(function (err,
@@ -6671,7 +6713,7 @@ Elm.Signal.make = function (_elm) {
             case "[]":
             return $Debug.crash("mergeMany was given an empty list!");}
          _U.badCase($moduleName,
-         "between lines 177 and 182");
+         "between lines 177 and 197");
       }();
    };
    var foldp = $Native$Signal.foldp;
