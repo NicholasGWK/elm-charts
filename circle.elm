@@ -8,22 +8,30 @@ import Color exposing (..)
 import Debug exposing (..)
 
 
-main =
-  collage 200 200 [
-  (traced (solid red) arcToPath (0,pi/4) 100),
-  ]
-
+testdata = [1,1,1]
 
 colors = [ red , blue , yellow , green , lightRed, lightGreen, lightYellow]
 
-arcToPath: (Float, Float) -> Float -> Path
-arcToPath arc radius =
-  (List.map (arcSegmentToBezierCurve arc radius) (steps 100)) |> path
+main =
+  collage 200 200
+  (dataToPolygons colors (calcArcLengths (normalize testdata)) 40 80)
+
+
+dataToPolygons: List Color -> List (Float,Float) -> Float -> Float -> List Form
+dataToPolygons colors data innerRadius outerRadius =
+  List.map2 (\color arc -> filled color (arcToPolygon arc innerRadius outerRadius)) colors data
+
+
+arcToPolygon: (Float, Float) -> Float -> Float -> Path
+arcToPolygon arc innerradius outerradius=
+  append (List.reverse (List.map (arcSegmentToBezierCurveEquation arc innerradius) (steps 100)))
+  (List.map (arcSegmentToBezierCurveEquation arc outerradius) (steps 100))
+  |> path
 
 
 normalize: List Float -> List Float
 normalize dataset =
-    List.map (\data -> data * pi / List.sum(dataset)) dataset
+    List.map (\data -> data * 2 * pi / List.sum(dataset)) dataset
 
 calcArcLengths: List Float -> List (Float,Float)
 calcArcLengths normalizedData =
@@ -39,7 +47,7 @@ addToList x xs =
 
 
 arcSegmentToBezierCurveEquation arc radius =
- computeBezier ( fromPolar (radius, fst arc)) (fromPolar (computeControlPoint (radius, fst arc) (calculateC arc) (pi / 2) )) (fromPolar(computeControlPoint (radius,snd arc) (calculateC arc) (pi / 2 * -1))) (fromPolar(radius, snd arc))
+ computeBezier ( fromPolar (radius, fst arc)) (fromPolar (computeControlPoint (radius, fst arc) (calculateC arc) (pi / 2)  radius)) (fromPolar(computeControlPoint (radius,snd arc) (calculateC arc) (pi / 2 * -1) radius)) (fromPolar(radius, snd arc))
 
 
 scalePolar: (Float,Float) -> Float -> (Float,Float)
@@ -57,9 +65,9 @@ computeBezier p0 p1 p2 p3 t =
 steps num =
   List.map (\current -> current / num) [0..num]
 
-computeControlPoint: (Float,Float) -> Float -> Float -> (Float,Float)
-computeControlPoint p0 c rotation =
-  toPolar (addPolar p0 ((c*100,((snd p0) + rotation))))
+computeControlPoint: (Float,Float) -> Float -> Float -> Float -> (Float,Float)
+computeControlPoint p0 c rotation radius =
+  toPolar (addPolar p0 ((c*radius,((snd p0) + rotation))))
 
 addPolar: (Float,Float) -> (Float,Float) -> (Float,Float)
 addPolar p1 p2 =
