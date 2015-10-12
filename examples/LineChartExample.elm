@@ -1,13 +1,12 @@
-import LineChart exposing (chart, point)
+import LineChart exposing (chart)
 import Graphics.Collage exposing (..)
+import Graphics.Element exposing (..)
 import Color exposing (..)
 import List exposing (..)
+import Maybe exposing (..)
 
+data = [(10,10), (20,20), (25,25)]
 
-data = [(10,10), (20,20), (20,-30)]
-
-dataAsPoints data=
-  List.map (\tuple -> point tuple)  data
 
 main =
-  collage 200 200 (chart (dataAsPoints data) red)
+  chart data red 500 500
