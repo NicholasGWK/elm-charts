@@ -5,8 +5,8 @@ import Color exposing (..)
 import List exposing (..)
 import Maybe exposing (..)
 
-data = [(10,10), (20,20), (25,25)]
+data = [(10,10), (15,20), (25,25)]
 
 
 main =
-  chart data red 500 500
+  chart data red 200 200
