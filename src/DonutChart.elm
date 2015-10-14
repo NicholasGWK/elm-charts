@@ -22,7 +22,7 @@ import Debug exposing (..)
 Restrictions: No value should be larger than 25% of the sum. There is a restriction in the bezier
 approimation for angles > pi/2 radians, so I need to divide those up into multiple adjoining segments
 
-Colors must be provided at current.
+Colors must be provided currently.
 
   chart [red, blue, green, yellow] [1,1,1,1] 50 100 == "Donut chart split in 4, with innerRadius 50 and outerRadus 100"
 -}
